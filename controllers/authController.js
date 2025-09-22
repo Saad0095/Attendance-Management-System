@@ -4,7 +4,7 @@ import markAttendanceFunction from "../utils/markAttendaceFunction.js";
 
 const generateRollNo = async () => {
   const count = await User.countDocuments();
-  return String(count + 1).padStart(3, "0"); // e.g., 001, 002, 003
+  return String(count + 1).padStart(3, "0"); 
 };
 
 export const register = async (req, res) => {
@@ -35,9 +35,9 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { rollNo, password } = req.body;
+    const { email, password } = req.body;
 
-    const user = await User.findOne({ rollNo });
+    const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ error: "Invalid roll number" });
 
     const isMatch = await user.comparePassword(password);
@@ -49,7 +49,7 @@ export const login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    const attendanceResult = await markAttendanceFunction(rollNo);
+    const attendanceResult = await markAttendanceFunction(user.rollNo);
 
     res.json({
       message: "Login successful",

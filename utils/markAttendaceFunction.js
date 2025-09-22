@@ -1,17 +1,18 @@
-import User from "../models/user.js"
-import Attendance from "../models/attendance.js"
+// utils/markAttendanceFunction.js
+import User from "../models/user.js";
+import Attendance from "../models/attendance.js";
 
 const markAttendanceFunction = async (rollNo) => {
   const today = new Date();
   const dayOfWeek = today.getDay();
 
-  if (dayOfWeek != 2 && dayOfWeek != 4) {
-    return res.json({ error: "You can't mark your attendance t0day!" });
+  if (dayOfWeek !== 2 && dayOfWeek !== 4) {
+    return { error: "You can't mark your attendance today!" };
   }
 
   const user = await User.findOne({ rollNo });
   if (!user) {
-    return res.json({ error: "User not found!" });
+    return { error: "User not found!" };
   }
 
   const startOfDay = new Date(today.setHours(0, 0, 0, 0));
@@ -23,12 +24,13 @@ const markAttendanceFunction = async (rollNo) => {
   });
 
   if (alreadyMarked) {
-    return res.json({ error: "Attendance already marked!" });
+    return { error: "Attendance already marked!" };
   }
 
   const attendance = new Attendance({ student: user._id, status: "present" });
   await attendance.save();
+
   return { message: "Attendance marked successfully!" };
 };
 
-export default markAttendanceFunction
+export default markAttendanceFunction;
